@@ -7,18 +7,26 @@ import (
 	"os/exec"
 	"strings"
 	"time"
-	confwatch "watch/confwatch"
+
+	"watch/confwatch"
+	"watch/loggwatch"
 
 	"github.com/fsnotify/fsnotify"
 )
 
 func fileFunc(arquivo string) error {
+	logger, err := loggwatch.SetupLogger()
+	if err != nil {
+		panic("Erro ao configurar o logger: " + err.Error())
+	}
+	defer logger.Sync()
+
 	fmt.Println("Procurando o arquivo", arquivo)
 
 	// Verifica se o arquivo existe
 	if _, err := os.Stat(arquivo); os.IsNotExist(err) {
 		err1 := errors.New("Arquivo não encontrado:" + err.Error())
-		logError(err1.Error())
+		logger.Error(err1.Error())
 		return fmt.Errorf("Arquivo não encontrado: %v", err)
 	}
 
@@ -34,7 +42,7 @@ func fileFunc(arquivo string) error {
 	stdout, err := cmd.Output()
 	if err != nil {
 		err1 := errors.New("Erro ao executar o comando")
-		logError(err1.Error())
+		logger.Error(err1.Error())
 		return fmt.Errorf("Erro ao executar o comando 'find': %v", err)
 	}
 
@@ -48,7 +56,7 @@ func fileFunc(arquivo string) error {
 	file, err := os.Create(outputFileName)
 	if err != nil {
 		err1 := errors.New("Erro ao criar o arquivo de saída")
-		logError(err1.Error())
+		logger.Error(err1.Error())
 		return fmt.Errorf("Erro ao criar o arquivo de saída: %v", err)
 
 	}
@@ -57,7 +65,7 @@ func fileFunc(arquivo string) error {
 	_, err = file.WriteString(string(stdout))
 	if err != nil {
 		err1 := errors.New("Erro ao criar o arquivo de saída")
-		logError(err1.Error())
+		logger.Error(err1.Error())
 		return fmt.Errorf("Erro ao escrever no arquivo de saída: %v", err)
 	}
 
@@ -66,21 +74,13 @@ func fileFunc(arquivo string) error {
 	return nil
 }
 
-func logError(errorMessage string) {
-	errorLogFileName := "/tmp/error_log.txt"
-	errorLog, err := os.OpenFile(errorLogFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println("Erro ao abrir ou criar o arquivo de log de erros:", err)
-		return
-	}
-	defer errorLog.Close()
-
-	if _, err := errorLog.WriteString(errorMessage + "\n"); err != nil {
-		fmt.Println("Erro ao escrever no arquivo de log de erros:", err)
-	}
-}
-
 func main() {
+	logger, err := loggwatch.SetupLogger()
+	if err != nil {
+		panic("Erro ao configurar o logger: " + err.Error())
+	}
+	defer logger.Sync()
+
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		fmt.Println("ERROR", err)
@@ -124,7 +124,7 @@ func main() {
 	} else {
 		fmt.Println("ERROR", err)
 		err1 := errors.New("Diretório inexistente")
-		logError(err1.Error())
+		logger.Error(err1.Error())
 		panic("Diretório inexistente")
 
 	}

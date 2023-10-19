@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const configFile = "/etc/monitor/config.json"
+const configFile = "config.json"
 
 type AppConfig struct {
 	AnsiblePlaybookComand string `json:"playbook_command"`
@@ -21,7 +21,7 @@ type AppConfig struct {
 func RetornaConf(cn string) (string, error) {
 
 	var config AppConfig
-	configFile, err := os.ReadFile("config.json")
+	configFile, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatalf("Erro ao ler o arquivo de configuração: %v", err)
 	}
