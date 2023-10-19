@@ -1,0 +1,1 @@
+{"level":"error","timestamp":"2023-10-18T23:09:56.462-0300","message":"Diretório inexistente"}
