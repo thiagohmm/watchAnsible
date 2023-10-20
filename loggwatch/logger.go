@@ -1,13 +1,17 @@
 package loggwatch
 
 import (
+	"watch/confwatch"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 func SetupLogger() (*zap.Logger, error) {
+	var errorFile, _ = confwatch.RetornaConf("LogErrorFile")
+
 	config := zap.NewProductionConfig()
-	config.OutputPaths = []string{"log.txt"} // Nome do arquivo de log
+	config.OutputPaths = []string{errorFile} // Nome do arquivo de log
 	config.EncoderConfig = zapcore.EncoderConfig{
 		TimeKey:        "timestamp",
 		LevelKey:       "level",
