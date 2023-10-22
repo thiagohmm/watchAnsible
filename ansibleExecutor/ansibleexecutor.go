@@ -9,16 +9,13 @@ import (
 
 type Ansible struct {
 	inventoryFile string
-	user          string
-	privateKey    string
+	limit         string
 }
 
-// 构造函数，构造 ansible 运行所需参数
-func NewAnsible(inventoryFile, user, privateKey string) *Ansible {
+func NewAnsible(inventoryFile, limit string) *Ansible {
 	return &Ansible{
 		inventoryFile: inventoryFile,
-		user:          user,
-		privateKey:    privateKey,
+		limit:         limit,
 	}
 }
 
@@ -29,8 +26,7 @@ func (a *Ansible) RunPlaybook(playbookPath string) (string, error) {
 
 	cmd := exec.Command("ansible-playbook",
 		"-i", a.inventoryFile,
-		"-u", a.user,
-		"--private-key="+a.privateKey,
+		"--limit "+a.limit,
 		playbookPath)
 
 	cmd.Stdout = &stdout

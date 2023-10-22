@@ -3,10 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
-	"os/exec"
-	"strings"
-	"time"
 
 	"watch/confwatch"
 	"watch/loggwatch"
@@ -15,62 +11,29 @@ import (
 )
 
 func fileFunc(arquivo string) error {
+
+	fmt.Print("Recebendo o arquivo", arquivo)
+
 	logger, err := loggwatch.SetupLogger()
 	if err != nil {
 		panic("Erro ao configurar o logger: " + err.Error())
 	}
 	defer logger.Sync()
 
-	fmt.Println("Procurando o arquivo", arquivo)
+	MapAnsibleFile, error := confwatch.RetornaConf("MapAnsibleFile")
 
-	// Verifica se o arquivo existe
-	if _, err := os.Stat(arquivo); os.IsNotExist(err) {
-		err1 := errors.New("Arquivo não encontrado:" + err.Error())
-		logger.Error(err1.Error())
-		return fmt.Errorf("Arquivo não encontrado: %v", err)
+	fmt.Println("Printando", MapAnsibleFile)
+	if error == nil {
+
+		fmt.Print("Printando2", MapAnsibleFile)
+		//playbook, erro := mapconfiguration.FindValueForKey(MapAnsibleFile, arquivo)
+
+		//ansibleexecutor.NewAnsible({})
+
+	} else {
+		logger.Error(arquivo + " Sem playbook ou host nao encontrado")
+		return error
 	}
-
-	res := strings.ReplaceAll(arquivo, "/home/thiagohmm/watchTESTE/", "")
-	fmt.Println(res)
-	app := "find"
-
-	arg0 := "/"
-	arg1 := "-name"
-	arg2 := res
-
-	cmd := exec.Command(app, arg0, arg1, arg2)
-	stdout, err := cmd.Output()
-	if err != nil {
-		err1 := errors.New("Erro ao executar o comando")
-		logger.Error(err1.Error())
-		return fmt.Errorf("Erro ao executar o comando 'find': %v", err)
-	}
-
-	fmt.Print(string(stdout))
-
-	// Obter a data atual
-	dataAtual := time.Now().Format("2006-01-02")
-	outputFileName := fmt.Sprintf("/tmp/%s_%s.txt", res, dataAtual)
-
-	// Escrever a saída no arquivo
-	file, err := os.Create(outputFileName)
-	if err != nil {
-		err1 := errors.New("Erro ao criar o arquivo de saída")
-		logger.Error(err1.Error())
-		return fmt.Errorf("Erro ao criar o arquivo de saída: %v", err)
-
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(string(stdout))
-	if err != nil {
-		err1 := errors.New("Erro ao criar o arquivo de saída")
-		logger.Error(err1.Error())
-		return fmt.Errorf("Erro ao escrever no arquivo de saída: %v", err)
-	}
-
-	fmt.Printf("Saída salva em %s\n", outputFileName)
-
 	return nil
 }
 
@@ -123,7 +86,7 @@ func main() {
 
 	} else {
 		fmt.Println("ERROR", err)
-		err1 := errors.New("Diretório inexistente")
+		err1 := errors.New("Diretório " + watchDirectory + " inexistente")
 		logger.Error(err1.Error())
 		panic("Diretório inexistente")
 

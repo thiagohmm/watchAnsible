@@ -1,9 +1,10 @@
 {
   "playbook_command": "/usr/bin/ansible-playbook",
-  "watch_folder": "/Users/thiagohmm/Documents/watchAnsible/teste2/",
+  "watch_folder": "/Users/thiagohmm/Documents/watchAnsible/teste2",
   "error_File" : "monitor.log",
   "log_ansible_path": "/var/log/",
-  "map_ansible_path": "/export/ANIS/ansible",
+  "map_ansible_path": "/export/ANIS/Configuration",
   "log_extension": ".logANS",
-  "config_map": "/export/ANIS/Configuration"
+  "config_map": "/export/ANIS/Configuration",
+  "ansible_location": "/etc/ansible"
 }

@@ -12,10 +12,11 @@ type AppConfig struct {
 	AnsiblePlaybookComand string `json:"playbook_command"`
 	WatchFolder           string `json:"watch_folder"`
 	LogErrorFile          string `json:"error_File"`
-	LogAnsibleFile        string `json:log_ansible_path`
-	MapAnsibleFile        string `json:map_ansible_path`
-	LogExtension          string `json:log_extension`
-	ConfigurationMap      string `json:config_map`
+	LogAnsibleFile        string `json:"log_ansible_path"`
+	MapAnsibleFile        string `json:"map_ansible_path"`
+	LogExtension          string `json:"log_extension"`
+	ConfigurationMap      string `json:"config_map"`
+	AnsibleLocation       string `json:"ansible_location"`
 }
 
 func RetornaConf(cn string) (string, error) {
@@ -53,6 +54,9 @@ func RetornaConf(cn string) (string, error) {
 
 	case "ConfigurationMap":
 		return config.ConfigurationMap, nil
+
+	case "AnsibleLocation":
+		return config.AnsibleLocation, nil
 
 	default:
 		return "Error", os.ErrExist
