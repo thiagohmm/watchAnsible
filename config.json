@@ -3,7 +3,7 @@
   "watch_folder": "/Users/thiagohmm/Documents/watchAnsible/teste2",
   "error_File" : "monitor.log",
   "log_ansible_path": "/var/log/",
-  "map_ansible_path": "/export/ANIS/Configuration",
+  "map_ansible_path": "/export/ANIS/Configuration/ansiblemap.conf",
   "log_extension": ".logANS",
   "config_map": "/export/ANIS/Configuration",
   "ansible_location": "/etc/ansible"

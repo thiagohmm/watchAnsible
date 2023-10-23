@@ -2,6 +2,7 @@ package confwatch
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 )
@@ -35,27 +36,53 @@ func RetornaConf(cn string) (string, error) {
 
 	switch cn {
 	case "AnsiblePlaybookComand":
+		if config.AnsiblePlaybookComand == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
 		return config.AnsiblePlaybookComand, nil
 
 	case "WatchFolder":
+		if config.WatchFolder == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
+
 		return config.WatchFolder, nil
 
 	case "LogErrorFile":
+		if config.LogErrorFile == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
+
 		return config.LogErrorFile, nil
 
 	case "LogAnsibleFile":
+		if config.LogAnsibleFile == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
 		return config.LogAnsibleFile, nil
 
 	case "MapAnsibleFile":
+		if config.MapAnsibleFile == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
 		return config.MapAnsibleFile, nil
 
 	case "LogExtension":
+		if config.LogExtension == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
 		return config.LogExtension, nil
 
 	case "ConfigurationMap":
+		if config.ConfigurationMap == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
 		return config.ConfigurationMap, nil
 
 	case "AnsibleLocation":
+		if config.AnsibleLocation == "" {
+			return "", fmt.Errorf("Chave Nula")
+		}
 		return config.AnsibleLocation, nil
 
 	default:

@@ -22,7 +22,6 @@ func fileFunc(arquivo string) error {
 
 	MapAnsibleFile, error := confwatch.RetornaConf("MapAnsibleFile")
 
-	fmt.Println("Printando", MapAnsibleFile)
 	if error == nil {
 
 		fmt.Print("Printando2", MapAnsibleFile)
@@ -31,7 +30,7 @@ func fileFunc(arquivo string) error {
 		//ansibleexecutor.NewAnsible({})
 
 	} else {
-		logger.Error(arquivo + " Sem playbook ou host nao encontrado")
+		logger.Error(arquivo + "arquivo de configuraçao não encontrado")
 		return error
 	}
 	return nil
