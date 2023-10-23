@@ -3,6 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"strings"
 
 	"watch/confwatch"
 	"watch/loggwatch"
@@ -10,9 +13,16 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
+func removeFile(arquivo string) {
+	e := os.Remove(arquivo)
+	if e != nil {
+		log.Fatal(e)
+	}
+}
+
 func fileFunc(arquivo string) error {
 
-	fmt.Print("Recebendo o arquivo", arquivo)
+	fmt.Println("Recebendo o arquivo", arquivo)
 
 	logger, err := loggwatch.SetupLogger()
 	if err != nil {
@@ -22,17 +32,37 @@ func fileFunc(arquivo string) error {
 
 	MapAnsibleFile, error := confwatch.RetornaConf("MapAnsibleFile")
 
-	if error == nil {
+	if error != nil {
+		logger.Error("MapAnsibleFile chave de configuraçao não encontrado")
+		removeFile(arquivo)
 
-		fmt.Print("Printando2", MapAnsibleFile)
-		//playbook, erro := mapconfiguration.FindValueForKey(MapAnsibleFile, arquivo)
-
-		//ansibleexecutor.NewAnsible({})
-
-	} else {
-		logger.Error(arquivo + "arquivo de configuraçao não encontrado")
-		return error
 	}
+
+	log_ansible_path, error := confwatch.RetornaConf("LogAnsibleFile")
+	if error != nil {
+		logger.Error("log_ansible_path chave de configuraçao não encontrado")
+		removeFile(arquivo)
+
+	}
+
+	ansible_location, error := confwatch.RetornaConf("AnsibleLocation")
+	if error != nil {
+		logger.Error("ansible_location chave de configuraçao não encontrado")
+		removeFile(arquivo)
+
+	}
+
+	var watchDirectory, _ = confwatch.RetornaConf("WatchFolder")
+	if err != nil {
+		logger.Error("WatchFolder chave de configuraçao não encontrado")
+		removeFile(arquivo)
+	}
+
+	host := strings.Split(arquivo, watchDirectory)[1]
+	fmt.Println("printando o host", host)
+
+	fmt.Println(MapAnsibleFile, log_ansible_path, ansible_location, host)
+
 	return nil
 }
 
