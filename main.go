@@ -9,6 +9,7 @@ import (
 
 	"watch/confwatch"
 	"watch/loggwatch"
+	"watch/mapconfiguration"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -61,7 +62,21 @@ func fileFunc(arquivo string) error {
 	host := strings.Split(arquivo, watchDirectory)[1]
 	fmt.Println("printando o host", host)
 
-	fmt.Println(MapAnsibleFile, log_ansible_path, ansible_location, host)
+	log_extension, error := confwatch.RetornaConf("LogExtension")
+	if error != nil {
+		logger.Error("ansible_location chave de configuraçao não encontrado")
+		removeFile(arquivo)
+
+	}
+
+	playbook, error := mapconfiguration.FindValueForKey(MapAnsibleFile, host)
+	if error != nil {
+		logger.Error("Arquivo map ansible com error")
+		removeFile(arquivo)
+
+	}
+	playbookPath := ansible_location + "/" + playbook
+	fmt.Println(MapAnsibleFile, log_ansible_path, ansible_location, host, log_extension, playbookPath)
 
 	return nil
 }
