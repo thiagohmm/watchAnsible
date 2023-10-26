@@ -4,6 +4,8 @@ package ansibleexecutor
 
 import (
 	"bytes"
+	"errors"
+	"os"
 	"os/exec"
 )
 
@@ -19,21 +21,38 @@ func NewAnsible(inventoryFile, limit string) *Ansible {
 	}
 }
 
-// 运行接口
-func (a *Ansible) RunPlaybook(playbookPath string) (string, error) {
+func (a *Ansible) RunPlaybook(playbookPath string, host string, path string, extension string) error {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
 	cmd := exec.Command("ansible-playbook",
 		"-i", a.inventoryFile,
-		"--limit "+a.limit,
+		"--limit", a.limit,
 		playbookPath)
 
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
-	err := cmd.Run()
+	logfile := path + "/" + host + extension
+	// Crie um arquivo para direcionar a saída
+	outputFile, err := os.Create(logfile)
+	if err != nil {
+		return err
+	}
+	defer outputFile.Close()
 
-	// 返回结果
-	return stdout.String() + stderr.String(), err
+	// Defina o arquivo como a saída do comando
+	cmd.Stdout = outputFile
+
+	err = cmd.Run()
+
+	if err != nil {
+		return err
+	}
+
+	if cmd.ProcessState.ExitCode() != 0 {
+		return errors.New("ansible-playbook failed")
+	}
+
+	return nil
 }
