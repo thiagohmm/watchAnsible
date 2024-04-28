@@ -89,3 +89,13 @@ func RetornaConf(cn string) (string, error) {
 		return "Error", os.ErrExist
 	}
 }
+
+func CheckIfFileIsBlank(arquivo string) (string, error) {
+	file, err := os.ReadFile(arquivo)
+		
+	if err != nil {
+		log.Fatalf("unable to read file: %v", err)
+	}
+		return(string(file), nil);
+	
+}

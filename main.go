@@ -25,60 +25,70 @@ func fileFunc(arquivo string) error {
 
 	fmt.Println("Recebendo o arquivo", arquivo)
 
-	logger, err := loggwatch.SetupLogger()
+	checkIfFIleisBlank, err := confwatch.CheckIfFileIsBlank(arquivo)
 	if err != nil {
-		panic("Erro ao configurar o logger: " + err.Error())
-	}
-	defer logger.Sync()
-
-	MapAnsibleFile, error := confwatch.RetornaConf("MapAnsibleFile")
-
-	if error != nil {
-		logger.Error("MapAnsibleFile chave de configuraçao não encontrado")
-		removeFile(arquivo)
-
+		log.Fatal(err)
 	}
 
-	log_ansible_path, error := confwatch.RetornaConf("LogAnsibleFile")
-	if error != nil {
-		logger.Error("log_ansible_path chave de configuraçao não encontrado")
-		removeFile(arquivo)
+	if checkIfFIleisBlank == "" {
 
+		logger, err := loggwatch.SetupLogger()
+		if err != nil {
+			panic("Erro ao configurar o logger: " + err.Error())
+		}
+		defer logger.Sync()
+
+		MapAnsibleFile, error := confwatch.RetornaConf("MapAnsibleFile")
+
+		if error != nil {
+			logger.Error("MapAnsibleFile chave de configuraçao não encontrado")
+			removeFile(arquivo)
+
+		}
+
+		log_ansible_path, error := confwatch.RetornaConf("LogAnsibleFile")
+		if error != nil {
+			logger.Error("log_ansible_path chave de configuraçao não encontrado")
+			removeFile(arquivo)
+
+		}
+
+		ansible_location, error := confwatch.RetornaConf("AnsibleLocation")
+		if error != nil {
+			logger.Error("ansible_location chave de configuraçao não encontrado")
+			removeFile(arquivo)
+
+		}
+
+		var watchDirectory, _ = confwatch.RetornaConf("WatchFolder")
+		if err != nil {
+			logger.Error("WatchFolder chave de configuraçao não encontrado")
+			removeFile(arquivo)
+		}
+
+		host := strings.Split(arquivo, watchDirectory)[1]
+		fmt.Println("printando o host", host)
+
+		log_extension, error := confwatch.RetornaConf("LogExtension")
+		if error != nil {
+			logger.Error("ansible_location chave de configuraçao não encontrado")
+			removeFile(arquivo)
+
+		}
+
+		playbook, error := mapconfiguration.FindValueForKey(MapAnsibleFile, host)
+		if error != nil {
+			logger.Error("Arquivo map ansible com error")
+			removeFile(arquivo)
+
+		}
+		playbookPath := ansible_location + "/" + playbook
+		fmt.Println(MapAnsibleFile, log_ansible_path, ansible_location, host, log_extension, playbookPath)
+
+		return nil
+	} else {
+		return errors.New("Arquivo em branco")
 	}
-
-	ansible_location, error := confwatch.RetornaConf("AnsibleLocation")
-	if error != nil {
-		logger.Error("ansible_location chave de configuraçao não encontrado")
-		removeFile(arquivo)
-
-	}
-
-	var watchDirectory, _ = confwatch.RetornaConf("WatchFolder")
-	if err != nil {
-		logger.Error("WatchFolder chave de configuraçao não encontrado")
-		removeFile(arquivo)
-	}
-
-	host := strings.Split(arquivo, watchDirectory)[1]
-	fmt.Println("printando o host", host)
-
-	log_extension, error := confwatch.RetornaConf("LogExtension")
-	if error != nil {
-		logger.Error("ansible_location chave de configuraçao não encontrado")
-		removeFile(arquivo)
-
-	}
-
-	playbook, error := mapconfiguration.FindValueForKey(MapAnsibleFile, host)
-	if error != nil {
-		logger.Error("Arquivo map ansible com error")
-		removeFile(arquivo)
-
-	}
-	playbookPath := ansible_location + "/" + playbook
-	fmt.Println(MapAnsibleFile, log_ansible_path, ansible_location, host, log_extension, playbookPath)
-
-	return nil
 }
 
 func main() {
