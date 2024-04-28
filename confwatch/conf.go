@@ -92,10 +92,10 @@ func RetornaConf(cn string) (string, error) {
 
 func CheckIfFileIsBlank(arquivo string) (string, error) {
 	file, err := os.ReadFile(arquivo)
-		
+
 	if err != nil {
 		log.Fatalf("unable to read file: %v", err)
 	}
-		return(string(file), nil);
-	
+
+	return string(file), nil
 }

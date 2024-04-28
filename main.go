@@ -30,7 +30,7 @@ func fileFunc(arquivo string) error {
 		log.Fatal(err)
 	}
 
-	if checkIfFIleisBlank == "" {
+	if len(checkIfFIleisBlank) == 0 {
 
 		logger, err := loggwatch.SetupLogger()
 		if err != nil {
@@ -85,10 +85,12 @@ func fileFunc(arquivo string) error {
 		playbookPath := ansible_location + "/" + playbook
 		fmt.Println(MapAnsibleFile, log_ansible_path, ansible_location, host, log_extension, playbookPath)
 
-		return nil
 	} else {
-		return errors.New("Arquivo em branco")
+		fmt.Println("Arquivo com conteudo", checkIfFIleisBlank)
+
 	}
+
+	return nil
 }
 
 func main() {
