@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func executarPlaybookAnsible(playbookPath string, limit string) (result []string, err error) {
+func ExecutarPlaybookAnsible(playbookPath string, limit string) (result []string, err error) {
 	logger, err := loggwatch.SetupLogger()
 
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{

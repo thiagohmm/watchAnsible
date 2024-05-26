@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"watch/ansibleexecutor"
 	"watch/confwatch"
 	"watch/loggwatch"
 	"watch/mapconfiguration"
@@ -80,10 +81,21 @@ func fileFunc(arquivo string) error {
 		if error != nil {
 			logger.Error("Arquivo map ansible com error")
 			removeFile(arquivo)
-
 		}
+
 		playbookPath := ansible_location + "/" + playbook
 		fmt.Println(MapAnsibleFile, log_ansible_path, ansible_location, host, log_extension, playbookPath)
+
+		//var ansible = ansibleexecutor.Ansible{}
+
+		resultPlaybook, err := ansibleexecutor.ExecutarPlaybookAnsible(playbookPath, host)
+
+		if err != nil {
+			logger.Error("Erro ao executar o playbook ansible")
+			removeFile(arquivo)
+		}
+		fmt.Println("Playbook executado com sucesso", resultPlaybook)
+		logger.Info("Playbook executado com sucesso" + strings.Join(resultPlaybook, " "))
 
 	} else {
 		fmt.Println("Arquivo com conteudo", checkIfFIleisBlank)
