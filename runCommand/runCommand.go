@@ -1,6 +1,6 @@
 // ansibleexecutor/ansibleexecutor.go
 
-package runcommand
+package runCommand
 
 import (
 	"bytes"
