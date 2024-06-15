@@ -1,4 +1,4 @@
-package ansibleexecutor
+package ansibleExecutor
 
 import (
 	"context"
