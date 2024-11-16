@@ -96,9 +96,9 @@ func main() {
 		}
 	}()
 
-	var watchDirectory, _ = confwatch.RetornaConf("WatchFolder")
-	if err == nil {
-		err = watcher.Add(watchDirectory)
+	var watchDirectory, _ = confwatch.LoadConfig("../config.json")
+	if err != nil {
+		err = errors.New("Erro ao carregar o arquivo de configuração")
 	}
 
 	if err == nil {
@@ -106,9 +106,9 @@ func main() {
 
 	} else {
 		fmt.Println("ERROR", err)
-		err1 := errors.New("Diretório " + watchDirectory + " inexistente")
+		err1 := errors.New("Diretório " + watchDirectory.WatchFolder + " inexistente")
 		logger.Error(err1.Error())
-		panic("Diretório inexistente")
+		panic("Diretório " + watchDirectory.WatchFolder + " inexistente")
 
 	}
 
